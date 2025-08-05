@@ -1,0 +1,132 @@
+1- ¿Qué son as carreiras críticas? ¿Cando ocorren os interbloqueos?
+As carreiras críticas son fallos no comportamento dos programas que se
+dan cando dous ou máis procesos/fios/tarefas intentan acceder ao mesmo recurso compartido,
+como ficheiros, zonas de memoria, variables, etc, para escribir, ao mesmo tempo.
+Como a operación de ler a dirección onde escribir, a operación de escritura e
+a actualización da dirección de escritura non se realizan á vez pode ocorrer un
+cambio de contexto que implique que dous procesos lean a mesma dirección
+antes de que se poida actualizar, o que implica que un deles sobreescribe o
+dato do outro. O mecanismo básico que nos ofrecen os SO para evitalo son os
+semáforos: que permiten sincronizar os procesos, e os mutexes: semáforos que
+so toman o valor 1 (lock) ou 0 (unlock) que permiten defininir zonas de exclusión mútua.
+Os procesos poden ler un semáforo e, se e 0, esperan a que aumente o seu valor
+antes de continuar coa sua execución, tamén poden incrementar o valor dun
+semáforo. O SO encárgase de que estas operación sexas atómicas, se realicen
+sen cambios de contexto entre elas.
+Os interbloqueos ocorren en casos onde hai varios recursos compartidos e varios procesos,
+ao usar semáforos e posible que varios procesos se bloqueen entre sí ao intentar aceder a recursos
+compartidos en poder de outros sen liberar os que xa ten. Se eses procesos
+xa teñen o acceso exclusivo a recursos aos que outro procesos queren aceder,
+e á súa vez solicitan acceso aos recursos deses, hai problemas. Desta
+maneira, xa que ningún proceso libera os seus recursos antes de pedir o resto,
+ningún pode avanzar.
+
+
+2- ¿Qué é o planificador de tarefas de FreeRTOS?
+O planificador de FreeRTOS está pensado para repartir o uso do
+microcontrolador entre tarefas para permitir o seu uso en tempo real. O seu
+algoritmo é apropiativo de prioridade fixa con turno circular con reparto de
+tempo para tarefas da mesma prioridade.
+-Apropiativo quere decir que, se hai algunha tarefa que se pode executar (en estado "listo") de
+maior prioridade que a actual, a tarefa de maior prioridade detén a tarefa de menos prioridade e pasa a executarse.
+-Prioridade fixa quere decir que as tarefas teñen unha prioridade que non se cambia.
+-De turno circular quere decir que se hai tarefas coa mesma prioridade estas toman turnos executándose.
+-De reparto de tempo quere decir que eses turnos duran un "quantum" de tempo
+determinado. (Isto implica que tarefas de maior prioridade teñen que pausarse
+ou bloquearse por si mesmas para deixar tempo ás tarefas de mesma prioridade,
+senón estas nunca se executarían.)
+(A apropiación pode desactivarse, e o reparto de tempo pode configurarse.)
+
+
+3- ¿Qué é un proceso? ¿E un fío? ¿Diferencias?
+Un proceso é o concepto mais importante dos SO, é a abstracción dun
+programa/código en execución. O proceso inclúe o código do programa, os
+seus ficheiros abertos, o seu espazo de direccións, os seus datos, etc. O SO fai
+que cada proceso pense que está só na computadora, e encargase de repartir a
+memoria e a CPU entre todos os procesos activos. Un fío é similar a un
+proceso dentro dun proceso ou un proceso lixeiro. Un fio consta da sua
+propia secuencia de instruccións e pila, pero comparte a memoria, ficheiros e
+demáis co resto de fios dun proceso. Como os procesos pensan que están
+sos na computadora non se ven uns a outros, teñen o seu propio espazo de
+direccións (que debido á memoria virtual non son as mesmas que as direccións
+físicas) teñen que comunicarse a través do SO con zonas de memoria
+compartida, colas, sinais, paso de mensaxes, etc. Os fíos, ao compartir
+memoria, pódense comunicar fácilmente, por exemplo con variables globais. Dado
+que linux planifica a nivel de fío, 1 proceso con 1 fío e 1 proceso con 2 fíos son 3 fíos
+en total, cada fío terá o 33% da cpu, o proceso 1 terá o 33% e o 2 o 66%.
+
+
+4- ¿Qué son as operacións aritméticas? ¿E as operacións de desplazamento? ¿Lóxicas bit a bit? ¿Qué son as bandeiras?
+As operacións aritméticas son as tradicionais de matemáticas: suma,
+resta, multiplicación, división, e a súa utilidade é clara. (Na ALU do
+microprocesador poden implicar a dous rexistros, un rexistro e un dato
+inmediato, ou incluir na operación á bandeira C).
+As operacións de desplazamento consisten en desprazar, a dereita ou esquerda, os bits dun
+número, eliminado bits por un lado (ou metendoos na bandera C) e enchendo
+os espazos que quedan con 0 (ou o valor da bandeira C) ou cos bits que
+saen polo outro lado, na rotación. (Non son moi intuitivas pero teren diversos
+usos, como por exemplo multiplicar/dividir por 2 fácilmente.)
+As lóxicas bit a bit consisten en poder operar so cun subconxunto de bits dun
+enteiro con operacións lóxicas, sen afectar aos demáis. (Teñen múltiples
+usos, como por exemplo para ler bandeiras ou configurar/ler/escibir so un
+subconxunto de pins GPIO dun porto).
+As máis importantes son: AND, OR, XOR e NOT
+Non son o mesmo que as operacións booleanas, xa que as booleanas operan
+con todo o número e so dan 2 resultados posibles, Verdadeiro ou Falso.
+As bandeiras son bits do rexistro PSR que indican cómo é o resultado das
+operacións, son as Z, N, C, e V:
+-Z: indica que o resultado é cero.
+-N: indica que o resultado é negativo.
+-C: para números sen signo, indica que houbo acarreo na suma, e o resultado
+está truncado, ou non houbo préstamo na resta e o resultado é correcto
+-V: para número con signo, indica que houbo desbordo na suma ou resta e que
+o resultado está truncado.
+
+
+5- Desarrollar complemento a 2
+O complemento a 2 úsase para representar números enteiros negativos.
+Consiste en invertir todos os bits do número positivo (complemento a 1) e sumar 1. Os número
+que comecen por 0 serán positivos, e os que comecen por 1, negativos. So haberá
+1 cero, a diferenza do complemento a 1. É útil en computadoras porque simplifica
+o hardware, xa que as sumas, restas e multiplicacións fanse igual e dan
+resultado correcto independentemente que os número sexan positivos ou negativos.
+6:  00110
+-6: 11010
+Funciona ben coa multiplicación, ainda que se pode truncar o resultado, e mal
+coa división, xa que dividir números negativos da problemas.
+2 números de 16 multiplicados poden dar un resultado de ata 32 bits, 4 bytes.
+
+
+6- ¿Que é un porto GPIO?
+Un porto GPIO, General Purpouse Input Output, é un porto de
+entrada/saída configurable. Agrupa pins GPIO (8, 16 ou máis) programables
+independentemente, que poden ser de entrada/saída dixital, funcións
+analóxicas (entrada/saída) ou funcións alternativas máis complexas (LCD,
+interrupcións, USB, depende do pin e do fabricante). Os portos teñen rexistros
+de configuración e de entrada e de saída, que agrupan a varios pins en
+direccións mapeadas á memoria da placa/microcontrolador. Esos rexistros
+están mapeados á memoria para acceder a eles cómodamente con LDR/STR.
+No rexistro de entrada (IDR) cada bit representa o valor que se obtén nun pin
+diferente, no rexistro de saída (ODR) cada bit indica á saída que queremos
+que teña cada pin.
+
+
+7- ¿Qué significa que unha variable sea "volatile"?
+Cando se indica que unha variable é "volatile" queremos decir que o seu
+valor pode ser cambiado externamente ao código que estamos escribindo. Por
+exemplo se metemos nunha variable o rexistro IDR dun porto GPIO o valor pode
+cambiar se cambia a voltaxe de entrada no pin, e iso non se ve no código.
+(Tamén poden cambiar por rutinas de interrupción ISR, que non se sabe cando
+se van chamar.) Con "volatile" indicamos ao compilador que cada vez que se vaia
+a usar esa variable haina que volver a ler de memoria, e non fiarse do que haxa no
+rexistro onde a cargaramos.
+
+
+8- ¿Qué é DMA?
+O DMA é unha técnica para transferir datos directamente entre periféricos e
+memoria, ou ao revés. Permite liberar de traballo ao microcontrolador, xa que este
+so ten que configurar un controlador DMA e despois xa se encarga este das
+transferencias. Asi pódense transmitir datos máis rápido ou facer outras cousas
+mentres se espera por eles, tamén evita que os periféricos teñan que ter memoria
+propia. Usase comúnmente xunto coas interrupcións, as interrupcións poden
+iniciar transferencias DMA ou indicar cando rematan ao microcontrolador, por exemplo.

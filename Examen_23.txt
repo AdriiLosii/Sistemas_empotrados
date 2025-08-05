@@ -1,0 +1,13 @@
+Desarrollar (escoger 2 de 3):
+1. Banderas de estado
+2. Planificador de FreeRTOS
+3. DMA
+
+Preguntas cortas (escoger 5 de 7):
+4. Qué es y para que sirve un compilador
+5. Qué son los registros r13, r14 y r15, explicar brevemente
+6. Qué son las interrupciones
+7. Cuando ocurren las carreras críticas
+8. Qué es I²C
+9. Qué son los temporizadores en STM32
+10. Explicar complemento a 2 y para que sirve
