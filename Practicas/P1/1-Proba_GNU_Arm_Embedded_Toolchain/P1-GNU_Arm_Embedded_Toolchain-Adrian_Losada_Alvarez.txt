@@ -1,0 +1,6 @@
+1- Proba das GNU Arm EMbedded Toolchain
+	1.8- En la compilación con cortex-a7 se observa una estructura distinta pero parecida a la de cortex-m0, mientras que la de gcc es bastante diferente, ya que son compilaciones diseñadas para cpus distintas (por ejemplo: cortex-a7 para raspberry-pi)
+
+	1.9- Se puede apreciar una simplificación grande del código ensamblador, esto se debe a que hemos usado -O2 que se trata de una opción de optimización, mientras que -O0 no optimiza nada el código a compilar. Si añadimos un printf() al programa y compilamos con -O2 con gcc, vemos que el código ensamblador del programa que tiene el printf() es más amplio que el que no lo tiene, esto se debe a que dentro del main() estamos usando la c para algo, y obligamos al ensamblador a tenerla en cuenta, mientras que en el programa sin printf(), el compilador suprime las acciones de la función main().
+
+	1.10- El de los apuntes está escrito a mano por una persona, por lo que es menos óptimo que el realizado por el compilador.

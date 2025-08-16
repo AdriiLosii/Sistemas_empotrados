@@ -1,0 +1,20 @@
+2- Simulación con QtARMSim
+	2.1- Es mucho más sencillo ya que en este simplemente cargamos los valores 5 en el registro 0 (movs r0, #5) y 4 en el registro 1 (movs r1, #4) y a continuación los sumamos y cargamos el resultado en el registro 2 (adds r2, r1, r0)
+
+	2.2- Como era de esperar realiza la suma y carga el resultado en el registro 2, ninguna de las flags se activa,
+		ADD -> carga el resultado en el primer registro que se escriba (ADD r2, __, __) de la suma de los registros indicados (ADD __, r1, r0)
+		MOV -> carga los datos en el registro indicado (MOV r0, #5)
+
+	2.3- Se activa la flag "N", que nos indica que el resultado es negativo (4-5=-1)
+
+	2.4- Salta el error: "Error: instruction not supported in Thumb16 mode -- `adds r2,r1,r0'", esto se debe a que antiguamente se usaba únicamente la instrucción 'add'.
+
+	2.5- Para obtener las flags C y V con la suma, debemos definir los valores de r0 y r1 a 2, y desplazarlos a la izquierda 30 veces (con la instrucciín 'lsl') y realizar la suma.
+	En la resta, para obtener las flags C y V definiremos r0 como 2 y r1 como 2 (mov r1, #2) y lo desplazamos a la izquierda 30 veces (lsl r1, #30) y realizaremos la resta r1 menos r0 y almacenamos el resultado en r2 (sub r2, r1, r0)
+
+	2.7- Las instrucciones dentro de main() son muy similares a las que se compiló en 1.5, en cuanto a las definiciones las de QtARMSim son más breves.
+
+	2.8- 	.data -> Se utiliza para avisar al ensamblador de que todo lo que aparezca debajo de esta directiva (mientras no se diga lo contrario) debe ser almacenado en la zona de datos.
+		.word -> Indica al ensamblador que se quiere reservar espacio para una palabra e inicializarlo con un determinado valor.
+		.space -> Se usa para reservar X bytes de memoria e inicializarlos a 0.
+		.text -> Indica al ensamblador que lo que viene a continuación es el programa en ensamblador y que debe colocar las instrucciones que lo forman en la zona de memoria asignada al código ejecutable.
