@@ -1,0 +1,153 @@
+	1. Linux/Posix:
+	1.1- Terminal:
+	Son o proceso 6523
+	Son o proceso pai 6523, creei o fillo 6524. Variable=5 con direccion 0x5645e0852010
+	Son o proceso pai 6523, cambio o valor de variable. Variable=10 con direccion 0x5645e0852010
+	Son o proceso fillo 6524, creoume meu pai 6523.Variable=5 con direccion 0x5645e0852010
+	Son o proceso fillo 6524, cambio variable=55 con direccion 0x5645e0852010. Saindo con exit status 68
+	Son o proceso pai 6523, o meu 6524 fillo acabou con saida 68. Variable=10 con direccion 0x5645e0852010
+
+	-Que fai? Crea un proceso hijo a partir de un proceso padre utilizando 'fork()', al llamar a esta función, crea una copia del proceso original y empiezan a correr por separado. Cuando vuelve de la función, el proceso original le devuelve un identificador del proceso (PID), al nuevo proceso se le devuelve un 0, de esta forma cada proceso puede saber si es el original o uno nuevo.
+	-Que valores toman as variables en cada momento? Comentado en '1.1-simple_fork.c'
+	-Que direccións de memoria teñen? Tienen la misma dirección de memoria.
+	-Porque? Porque al crear el hijo con 'fork()' también se duplica el espacio de memoria, ya que cada proceso tiene una dirección de memoria propia. Por eso, aún que el hijo cambie el valor de la variable a 55, el valor que se muestra en el último print() es el que declaró el padre antes ('variable=10'). Los cambios que haga un proceso después del duplicado, no los puede ver el otro proceso.
+	-Que significa WEXITSTATUS(status)? Se utiliza para obtener el valor que pasó el hijo en la función 'exit()', en este caso podemos ver que terminó con 'exit_status=68'
+
+
+	1.2- Terminal:
+	Son o proceso 7122
+	Son o proceso 7122, creei o fio 139662854952704. Variable=5 con direccion 0x560f89441010
+	Son o proceso pai 7122, cambio o valor de variable. Variable=10 con direccion 0x560f89441010
+	Son o fío con pid 7122 e tid 7123. Variable=10 con direccion 0x560f89441010, Ola mundo
+	Son o fío con pid 7122 e tid 7123. Cambio o valor de variable=78 con direccion 0x560f89441010
+	Son o proceso pai 7122, acabou o meu fío 139662854952704. Variable=78 con direccion 0x560f89441010
+
+	-Que fai? Crea un hilo con la función 'pthread_create()' que admite 4 parámetros:
+	1- Un puntero a un identificador del hilo, la función devuelve este valor, así después podemos referenciar el hilo.
+	2- Atributos para la creación del hilo, en este caso se utiliza 'NULL' por lo que irá con los predefinidos.
+	3- Función que admite un puntero void* y devuelve void*. Esta función es la que se ejecutará como un hilo aparte y acabará cuando termine la función o cuando se llame a la función 'pthread_exit()'
+	4- Parámetro que se le pasará a la función anterior cuando se ejecute en el hilo.
+
+	Esta función devuelve un '0' si todo salió correctamente.
+	Cuando entra en el hilo paralelo hay un 'sleep(2)' que suspende este hilo durante 2 segundos en los que el programa principal realiza 2 prints y le cambia el valor a 'variable', después se ejecuta la instrucción 'pthread_join(fio1,NULL)' que sirve para esperar a que el hilo 'fio1' termine de ejecutarse y cuando termina, si se le pone algo distinto a 'NULL', devuelve lo que devuelve el hilo.
+
+	-Que valores toman as variables en cada momento? Comentado en '1.2-simple_thread.c'
+	-Que direccións de memoria teñen? Tienen la misma dirección de memoria.
+	-Porque? Porque a diferencia de los procesos que crean copias de la memoria, los hilos trabajan con la misma memoria, es decir, si un hilo cambia el valor de una variable, los demás hilos verán ese nuevo valor de la variable.
+
+
+	1.3- Terminal:
+	Son o proceso 7704
+	Son o proceso pai 7704, creei o fillo 7705. Variable=5 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, cambio o valor de variable. Variable=20 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, creei o fillo 7706. Variable=20 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, cambio o valor de variable. Variable=30 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, creei o fillo 7707. Variable=30 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, cambio o valor de variable. Variable=40 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, creei o fillo 7708. Variable=40 con direccion 0x5653fe25c010
+	Son o proceso pai 7704, cambio o valor de variable. Variable=50 con direccion 0x5653fe25c010
+	Son o proceso fillo 7705, creoume meu pai 7704.Variable=5 con direccion 0x5653fe25c010
+	Son o proceso fillo 7705, cambio variable=10 con direccion 0x5653fe25c010. Saindo con exit status 9
+	Son o proceso pai 7704, o meu 7705 fillo acabou con saida 9. Variable=50 con direccion 0x5653fe25c010
+	Son o proceso fillo 7706, creoume meu pai 1736.Variable=20 con direccion 0x5653fe25c010
+	Son o proceso fillo 7706, cambio variable=15 con direccion 0x5653fe25c010. Saindo con exit status 10
+	Son o proceso fillo 7707, creoume meu pai 1736.Variable=30 con direccion 0x5653fe25c010
+	Son o proceso fillo 7707, cambio variable=20 con direccion 0x5653fe25c010. Saindo con exit status 11
+	Son o proceso fillo 7708, creoume meu pai 1736.Variable=40 con direccion 0x5653fe25c010
+	Son o proceso fillo 7708, cambio variable=25 con direccion 0x5653fe25c010. Saindo con exit status 12
+
+	-Que fai? Utiliza un bucle for() para crear 4 hijos a partir del padre con 'fork()'. El padre sigue por el 'else' (4 veces) mientras que el "orden (i)" de los hijos se envían como parámetros a la función 'funcionFillo()'. En esta función los hijos tienen un 'sleep(i)' que para la ejecución 'i' segundos.
+	El padre y los hijos cambian el valor de 'variable', pero como son procesos distintos (tienen memorias independientes), ninguno puede ver los cambios realizados por el resto.
+	-Espera o pai aos fillos cun so wait()? Si.
+	-Porque? Porque está dentro dun bucle que se va a repetir hasta que la variable 'ret' se menor que '0', es decir, hasta que todos los hijos terminen.
+	-Comenta (elimina) a parte entre as liñas 40-42. Como funciona agora? Porque? Si no se comentan estas líneas, el programa finaliza cuando el primer hijo le envía un 'exit_status' al padre. Mientras que si se comentan, el programa termina cuando al padre le llegan los 'exit_status' de cada hijo.
+
+
+	1.4-
+	-Que fai? Crea un hijo a partir del padre con 'fork()' y a continuación se realiza lo mismo que en los programas anteriores pero además se llama a la función 'traballo_inutil()' desde el proceso padre y desde el proceso hijo (después de 5 segundos, ya que hay un 'sleep(5)'). En la otra terminal donde ejecutamos 'top -d1', podemos ver una lista de los procesos activos y su respectivo PID (junto con otras cosas, como el consumo en % de la CPU). Cuando ejecutamos este programa podemos ver que al proceso padre consumiendo el 100% de la CPU y unos segundos más tarde, al hijo consumiendo también el 100% de la CPU pero en un core distinto.
+	-Como se reparte a execución dos procesos (o ves en top)? Porque? Explicado anteriormente, cada proceso está en un core distinto, por eso los dos están ocupando el 100% de cada core.
+
+
+	1.5- 
+	-Á vez que o executas ten aberta outra terminal, executa o comando "ps -a" para ver que PID ten o proceso, depois executa "kill -SIGUSR1 [ese PID]". Que fai? Cuando el proceso recibe una señal debe parar lo que estaba haciendo y llevar algo a cabo. Cada señal tiene un nombre asociado que viene definido en el fichero file.h como una constante macro. En este caso, primer utilizamos la señal SIGUSR1.
+	signal() toma dos parámetros:
+	1- Un entero, es el nombre de la señal
+	2- Un puntero a una función que acepta un argumento entero y no devuelve nada, el manipulador de señal.
+	Si la llamada falla, devuelve SIG_ERR.
+	El comando 'kill' se puede utilizar para enviar una señal a un proceso indicando el nombre de la señal y el PID del proceso, cuando el main recibe el kill con el nombre de la señal SIGUSR1, detiene el programa principal y entra en 'signal()' que recibe como parámetro el nombre de la señal y el manipulador 'sig_handler'. El manipulador imprime el mensaje "Recibida señal" y devuelve el control al programa principal.
+	-Busca que fai o comando "pkill" e envía unha sinal con el, que fai? Este comando puede determinar el PID solo a partir del nombre del proceso, del propietario del proceso, etc. No es necesario pasarle el PID. Por lo tanto, si ejecutamos "pkill simple_signal" finaliza el proceso en la otra terminar y se imprime "Terminado".
+	-Cambia os parámetros de signal a SIGINT e SIG_IGN, compila, executa e intenta paralo con CRTL-c, funciona? Porqué? Si cambiamos los parametros de signal a SIGINT e SIG_IGN al hacer CTRL-C se envía un SIGINT al proceso, al añadir SIG_IGN, la señal es ignorada.
+
+
+
+	2. RTOS:
+	2.1- 
+	-Que fai? Crea dos tareas que imprimen un mensaje, una llamada 'S1' cada 500ms y otra llamada 'S2' cada 1000ms, por eso por pantalla mientras 'S1' escribe 2 mensajes mientras que 'S2' solo escribe 1.
+	-Como se pasan parámetros as funcións de task? Como punteros a vacío, es decir, se le puede pasar cualquier cosa y los recibe como tal.
+
+
+	2.2-
+	-Que fai? Crea 3 tareas: S1, S2 y Stopper. A la primera le pasa un delay de 500ms, a la segunda 1000ms y a la tercera 5000ms. Las dos primeras tareas hacen lo mismo que el programa anterior ('vASimpleTask()'), la tercera realiza la función 'vStopResume()' que se encarga de suspender/reanudar la tarea S1 cada 5000 ms.
+	-Como obten vStopResume o handle do outro task? Porqué o pode facer? Al crear la tarea 'S1' se le especificó el identificador 'xHandle1', después se define 'xHandleStopResume = xHandle1;', y en la función de la tarea 'Stopper' se realizan las acciones sobre 'xHandleStopResume' ('pcTaskGetName(xHandleStopResume)' y 'vTaskSuspend(xHandleStopResume)').
+
+
+	2.3-
+	-Que fai? Se crean las tareas 'S1' y 'S2' que imprimen un mensaje y después se produce un delay por el tiempo que tarda en finalizar las iteraciones del bucle for()
+	-Como realizan a espera as tarefas? Con el tiempo que tarda en finalizar el bucle anidado dentro del bucle infinito de la tarea, que al indicarle un número tan grande de iteraciones tarda unos segundos en finalizar.
+	-Que pasa se cambias a prioridade da tarefa "S2" a PRIORITY2? Porque? Solo se imprime el mensaje de la tarea 'S1' ya que al darle una prioridad mayor a ésta y como se está ejecutando tan rápido y continuamente, no le da tiempo a ejecutar otras tareas de menor prioridad.
+
+
+	2.4-
+	-Que fai? Retrasa las tareas hasta un tiempo especificado usando 'vTaskDelayUntil(&xLastWakeTime,xDelay)'. Por eso al ejecutar la tarea 'S1' aparece dos veces seguidas, 'S2' está retrasada. La hora absoluta de desbloqueo de la tarea será la de 'LastWakeTime (hora actual) + xDelay (tempo de ciclo)', por eso hay un pequeño delay entre las tareas cuando las mostramos.
+	-Que diferenza hai entre vTaskDelay() e vTaskDelayUntil()? vTaskDelay() especifica un tiempo de desbloqueo, es decir, un tiempo indicado desde que se llama a vTaskDelay(). Mientras que vTaskDelayUntil() especifica un tiempo absoluto en la que la tarea se desbloqueará.
+
+
+	2.5-
+	-Que fai? Crea 3 tareas: 'C1', 'C2' y 'P1'. Las dos primeras son continuas, es decir, no tiene delay (se ejecutan sin parar), mientras que la tercera es periódica, es decir, si tiene delay (hay pausas). En todas las tareas se imprimen mensajes.
+	-Como explicas o comportamento? Como 'C1' y 'C2' tienen la misma prioridad (2) se ejecutan una detrás de otra, mientras que 'P1' tiene prioridad (1) por lo que cuando le toque imprimir, suspenderá las otras 2 tareas para hacerlo.
+
+
+	2.6-
+	-Que fai? Muestra el número de ciclos que lleva la tarea idle. Como 'S1' imprime una de cada 2 veces al mismo tiempo que 'S2', sus contadores coinciden cada 2 llamadas de 'S1' (se ejecutan en el mismo ciclo).
+	-Porque funciona se nunca se inicia unha tarefa con vApplicationIdleHook()? Si se define la idle task, que se genera con la prioridad más baja, por lo que se estará ejecutando siempre que no haya tareas de mayor prioridad activas. Esta tarea siempre está en estado Ready y pasará a Running cuando haya tiempo en el sistema.
+
+
+
+	3. IPC:
+	3.1-
+	Versión 1:
+	-Que fai? Funciona ben (o consumidor recibe todos os elementos do produtor)? El productor mete 3 grupos de números (del 0 al 9, del 10 al 19 y del 20 al 29) en un buffer y el consumidor los quita también en 3 grupos (del 9 al 0, del 19 al 10 y del 29 al 20). Funciona correctamente ya que el consumidor consume todos los elementos del productor.
+	Versión 2:
+	-Funciona ben (o consumidor recibe todos os elementos do produtor)? Los elementos de producen/consumen más lentamente y se ordenan de manera distinta. El consumidor recibe los valores pero los consume de forma desordenada, aún así consigue eliminarlos todos.
+	Versión 3:
+	-Funciona ben (o consumidor recibe todos os elementos do produtor)? Hai carreiras críticas nalgunha das versións? As viches en todas as versións onde poden ocorrer? Que ocorreu cando as viches? No funciona bien, imprime algunos elementos que elimina como -1. Está eliminando posiciones en las que el productor aún no introdujo ningún elemento. Esto ocurre debido a una condición de carrera.
+
+
+	3.2-
+	-Que fai? Funciona ben (o consumidor recibe todos os elementos do produtor)? El programa funciona correctamente. El funcionamiento es similar al del programa anterior, pero en este caso se utilizan semáforos para indicar cuando se llena/vacía el buffer.
+	-Proba descomentado os sleep() e cambiando as funcións eliminarItem() e insertar item() polas versións con sleep(). Funciona ben (o consumidor recibe todos os elementos do produtor)? El productor/consumidor funcionan más lento y el consumidor consume los elementos de forma desordenada pero funciona correctamente.
+	-Que fan as funcións sem_wait() e sem_post()?
+		sem_wait(): decrementa el valor del semáforo. Si el valor del semáforo es cero, entonces la función se bloquea hasta que el valor del semáforo sea mayor que cero. Si el valor del semáforo es mayor que cero, entonces la función disminuye el valor del semáforo y continúa ejecutando.
+		sem_post(): aumenta el valor del semáforo. Si hay algún proceso bloqueado en la función "sem_wait", entonces uno de esos procesos se desbloquea y continúa ejecutando. Si no hay procesos bloqueados, entonces el valor del semáforo simplemente se incrementa.
+	-Compila e executa "produtor_consumidor_semaforos_v2". Como accede esta versión á posición no buffer? Funciona ben? Esta versión accede a la posición del buffer con el uso de la función 'sem_getvalue()' que no le garantiza que el valor esté actualizado. No funciona bien, imprime algunos elementos que elimina como -1. Está eliminando posiciones en las que el productor aún no introdujo ningún elemento.
+	-Que fai a función sem_getvalue()? Esta función toma como argumentos un puntero a la estructura de semáforo y un puntero a una variable de tipo "int". La función devuelve el valor actual del semáforo a través del segundo argumento.
+
+
+	3.3-
+	-Que fai? Crea 5 tareas productoras y 3 consumidoras. Cada tarea productora 'i' escribe 3 veces 'i' en el buffer. El tamaño del buffer es 5, por lo tanto cada 5 escrituras el buffer se llena, en este instante las tareas consumidoras comienzan a realizar lecturas hasta vaciarlo.
+	-Como funciona? Mediante tareas productoras y consumidoras se realiza la lectura y escritura en un buffer compartido. De tal manera que cuando el buffer se llena (5 escrituras), debe bloquearse la tarea productora y desbloquear la consumidora hasta que se vacie de nuevo el buffer, cuando esto suceda, se bloquea la tarea consumidora y se desbloquea la productora para repetir el proceso.
+	Para controlar los bloqueos y desbloqueos de las tareas se utilizan 3 semáforos:
+	1- mutex: controla el acceso al buffer (binario)
+	2- sem_baleiro: (contador) se ocupa hasta 5 veces en el bucle for() de la tarea productora y se libera otras 5 en la consumidora
+	3- sem_cheo: (contador) se libera hasta 5 veces en el bucle for() de la tarea consumidora y se ocupa otras 5 en la productora
+	-Que ocorre cando cambias a prioridade das tarefas "consumidor" a PRIORITY2, cambia o comportamento? Porque? Si, el comportamiento cambia, ya que pierde la preferencia sobre los semáforos y se irá turnando en el buffer con la productora, de manera que tendremos el siguiente comportamiento: lectura->escritura->lectura->escritura...
+
+
+	3.4-
+	-Que fai? Que fai cada task? Crea:
+	1- Una cola
+	2- Un temporizador de software de envío de cola: que recarga automáticamente cada 2 segundos. La función de devolución de la llamada del temporizador (prvQueueSendTimerCallback()) escribe el valor 200 en la cola. El temporizador se reinicia cada vez que pulsamos una tecla.
+	3- Dos tareas:
+		1- prvQueueSendTask(): implementa el envío de cola, utiliza 'vTaskDelayUntil()' para crear una tarea peródica que envía el valor 100 a cola cada 200ms.
+		2- prvQueueReceiveTask(): hace la recepción de la cola, espera a que lleguen datos a la cola y cuando los recibe, verifica su valor. Después, genera un mensaje para indicar si los datos vienen de la tarea de envío de cola o del temporizador de software.
+	-Como se comunican os tasks? Mediante la cola, que actúa como memoria compartida por ambos. Al recibir un dato, se bloquea la tarea receptora hasta que la cola vuelve a vaciarse.
