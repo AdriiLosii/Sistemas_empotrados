@@ -1,0 +1,10 @@
+	1.
+	1.1- gcc hace los bucles realizando primero una comparación de 2 objetos y después estableciendo una condición de salto a otra etiqueta.
+
+	1.2- Los saltos se realizan mediante la instrucción 'b' (branch), que se utiliza de la siguiente forma: 'b etiqueta' en donde etiqueta es el nombre de la etiqueta a la que se desea saltar. La etiqueta 'salto:' se puede traducir a una función definida que iguala 2 números a si mismos y después se vuelve a llamar a sí misma, creando un bucle infinito.
+	Obtenemos estos valores de PC porque en la primera linea hacemos un salto a la etiqueta 'salto' y pasamos de 0x00180000 a 0x00180008 ya que se han reservado 2 bits de memoria para cada 'b salto' (como hay 4: 4*2=8). Una vez dentro de la etiqueta branch se realizan las dos operaciones, cada una con 2 bits reservados, por lo tanto pasamos a 0x0018000C una vez realizadas y finalmente se llama recursivamente a la etiqueta 'salto' por lo que volvemos a 0x00180008.
+
+	1.4- La diferencia entre los codigos de ensamblador es que en el pasado por valor se cargan los valores de los registros y el pasado por referencia se trabaja con direcciones de memoria.
+
+	2.3- Multiplicar dos números es lo mismo que sumar tantas veces un número como indique el otro. Por ejemplo: 3*4 = 3+3+3+3 = 4+4+4 = 12
+	Esta será la lógica a implementar en el programa.

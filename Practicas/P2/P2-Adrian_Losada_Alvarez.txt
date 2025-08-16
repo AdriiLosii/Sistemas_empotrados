@@ -1,0 +1,25 @@
+	1.
+	1.1- Si intentamos cargar directamente el valor 500 obtenemos el siguiente error:  "Error: invalid immediate: 500 is out of range", esto se debe a que la instrucción 'mov' solo acepta números inmediatos con un tamaño máximo de 8 bits.
+	Para hacerlo, utilizaremos la siguiente pseudoinstrucción: 'ldr r0, =0X12345678' y 'ldr r1, =0X3344FF00'
+	El ensamblador metió r0 en la dirección 'r15 (PC) 0x00180002' y r1 en 'r15 (PC) 0x00180002'
+	Si intentamos realizar la instrucción 'add r3, r1, #8' el programa nos da el siguiente error: 'Error: immediate value out of range', ya que en la instrucción ADD no se pueden introducir valores inmediatos.
+
+	1.2- Son direcciones de memoria, en los que se encuentran los números definidos, en la primera linea le estamos diciendo que lea la dirección de memoria actual 12 direcciones más hacia delante, y como se leen en múltiplos de 4 hay que añadirle 4 direcciones más, por lo tanto nos queda 12+4=16 que en hexadecimal es 0X...010. No son instrucciones, ya que nunca se llegar a ejecutar debido a que se encuentran despues del programa principal, se trata de direcciones de memoria para cargar los números.
+
+	1.3- Se pueden ver las operaciones a realizar como instrucciones en el código ensamblador:
+		NOT -> mvns: niega todos los bits
+		AND -> ands: AND lógico
+		OR -> orrs: OR lógico
+		XOR -> eors: OR exclusivo lógico
+
+	1.5- Las instrucciones para extender los ceros se pueden ver en '.size (variable), (bytes)', mientras que las instrucciones para extender los signos se utiliza la instrucción 'sxtb rN, rN'.
+
+	1.6- Este código define un vector 'V' de 5 elementos (1, 2, 3, 4, 5), una variable 'b' con valor 5 y una variable 'res'. A continuación suma cada elemento del vector con b.
+	Esto lo hace realizando la suma elemento a elemento y almacenando el resultado de cada suma en la variable res y almacenandolo en el registro apropiado.
+
+
+	2.
+	2.1- Podriamos restar 255 al resultado y si nos da un número negativo significaría que la resta está bien.
+	La flag 'C' no salta ya que le hemos indicado con la instrucción strb que solo cargue 1 bit, que en hexadecimal serían 2 cifras, por lo tanto al realizar la suma 200+200, nos da como resultado 400 que en hexadecimal es 0X00000190, por lo tanto solo está cogiendo 0X09 como resultado que se corresponde al número decimal 144 que es menor a 1 byte (255 decimal).
+
+	2.2- Para que el resultado sea correcto debemos utilizar la instrucción sxtb, que extiende el signo del byte a la palabra.
